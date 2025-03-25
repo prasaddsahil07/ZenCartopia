@@ -24,8 +24,8 @@ const Customer = sequelize.define('Customer', {
     allowNull: true,
   },
 }, {
-  tableName: 'customers',
-  timestamps: false,
+  tableName: 'customers',   // table name
+  timestamps: true,
 });
 
 export default Customer;

@@ -2,11 +2,25 @@
   "name": "zencartopia",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "backend/app.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon backend/app.js",
+    "start": "node backend/app.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.0",
+    "sequelize": "^6.37.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
 }

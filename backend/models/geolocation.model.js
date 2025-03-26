@@ -8,10 +8,12 @@ const Geolocation = sequelize.define("Geolocation", {
   },
   geolocation_lat: {
     type: DataTypes.FLOAT(10, 2), // Restrict precision to avoid floating-point errors
+    primaryKey: true,
     allowNull: false,
   },
   geolocation_lng: {
     type: DataTypes.FLOAT(10, 2), // Restrict precision to avoid floating-point errors
+    primaryKey: true,
     allowNull: false,
   },
   geolocation_city: {
@@ -26,8 +28,5 @@ const Geolocation = sequelize.define("Geolocation", {
   tableName: "geolocations", // Explicit table name
   timestamps: true,
 });
-
-Geolocation.removeAttribute('id'); // Remove default Sequelize primary key
-Geolocation.primaryKeyAttributes = ["geolocation_lat", "geolocation_lng"]; // Composite PK
 
 export default Geolocation;

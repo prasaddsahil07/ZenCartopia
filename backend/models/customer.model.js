@@ -8,9 +8,8 @@ const Customer = sequelize.define('Customer', {
     allowNull: false,
   },
   customer_password: {
-    type: DataTypes.INTEGER,
-    defaultValue: 2025,
-    autoIncrement: true,
+    type: DataTypes.STRING,
+    defaultValue: "myPassword@123",
     allowNull: false,
   },
   customer_id: {
@@ -38,5 +37,7 @@ const Customer = sequelize.define('Customer', {
   tableName: 'customers',   // table name
   timestamps: true,
 });
+
+Customer.removeAttribute("id");
 
 export default Customer;

@@ -1,25 +1,27 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../db/database.js"; // Adjust path as needed
+import sequelize from "../db/dbConnect.js";
 
 const OrderItem = sequelize.define("OrderItem", {
   order_id: {
-    type: DataTypes.STRING, // Assuming order_id is a UUID or unique string
+    type: DataTypes.STRING, 
+    primaryKey: true,
     allowNull: false,
   },
   order_item_id: {
     type: DataTypes.INTEGER,
+    primaryKey: true,
     allowNull: false,
   },
   product_id: {
-    type: DataTypes.STRING, // Assuming product_id is a UUID or unique string
+    type: DataTypes.STRING, 
     allowNull: false,
   },
   seller_id: {
-    type: DataTypes.STRING, // Assuming seller_id is a UUID or unique string
+    type: DataTypes.STRING, 
     allowNull: false,
   },
   shipping_limit_date: {
-    type: DataTypes.DATE, // Stores date and time
+    type: DataTypes.DATE, 
     allowNull: false,
   },
   price: {
@@ -33,12 +35,6 @@ const OrderItem = sequelize.define("OrderItem", {
 }, {
   tableName: "order_items", // Explicit table name
   timestamps: true,
-  primaryKey: false, // Disables default auto-increment key
 });
-
-OrderItem.removeAttribute('id'); // Removes Sequelize's default primary key
-
-// Define composite primary key
-OrderItem.primaryKeyAttributes = ['order_id', 'order_item_id'];
 
 export default OrderItem;

@@ -7,12 +7,12 @@ const Order = sequelize.define("Order", {
     type: DataTypes.STRING,
     primaryKey: true,
   },
-  customer_id: {
+  customer_unique_id: {
     type: DataTypes.STRING,
     allowNull: false,
     references: {
       model: Customer,  // References Customers table
-      key: "customer_id",
+      key: "customer_unique_id",
     },
     onUpdate: "CASCADE",
     onDelete: "CASCADE",

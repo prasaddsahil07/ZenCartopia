@@ -21,8 +21,8 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 3000;
 sequelize.sync({ force: false })  // set force: true to drop tables and recreate on every run
 .then(() => {
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-})
-.catch(err => {
-console.error('Unable to sync database:', err);
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch(err => {
+    console.error('Unable to sync database:', err);
 });

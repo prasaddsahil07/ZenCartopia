@@ -2,6 +2,17 @@ import { DataTypes } from "sequelize";
 import sequelize from "../db/dbConnect.js";
 
 const Customer = sequelize.define('Customer', {
+  customer_name: {
+    type: DataTypes.STRING,
+    defaultValue: "Sangita",
+    allowNull: false,
+  },
+  customer_password: {
+    type: DataTypes.INTEGER,
+    defaultValue: 2025,
+    autoIncrement: true,
+    allowNull: false,
+  },
   customer_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

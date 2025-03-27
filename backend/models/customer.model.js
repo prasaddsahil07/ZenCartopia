@@ -14,7 +14,7 @@ const Customer = sequelize.define('Customer', {
     allowNull: false,
   },
   customer_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   customer_unique_id: {
@@ -23,7 +23,7 @@ const Customer = sequelize.define('Customer', {
     unique: true,
   },
   customer_zip_code_prefix: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   customer_city: {
@@ -37,6 +37,10 @@ const Customer = sequelize.define('Customer', {
   customer_profile_pic: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  customer_role: {
+    type: DataTypes.ENUM("customer", "admin"),
+    defaultValue: "customer",
   },
 }, {
   tableName: 'customers',   // table name

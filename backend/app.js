@@ -13,6 +13,8 @@ import Product from "./models/product.model.js";
 import Review from "./models/review.model.js"; 
 import Seller from "./models/seller.model.js";
 
+import authRoutes from "./routes/auth.route.js";
+
 const app = express();
 
 app.use(express.json());
@@ -24,6 +26,9 @@ dotenv.config({
 })
 
 const PORT = process.env.PORT || 3000;
+
+app.use("/api/v1/auth", authRoutes);
+
 sequelize.sync({ force: true })  // set force: true to drop tables and recreate on every run
 .then(() => {
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -15,6 +15,7 @@ import Seller from "./models/seller.model.js";
 
 import authRoutes from "./routes/auth.route.js";
 import productRoutes from "./routes/product.route.js";
+import reviewRoutes from "./routes/review.route.js";
 
 const app = express();
 
@@ -34,6 +35,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/product", productRoutes);
+app.use("/api/v1/review", reviewRoutes);
 
 sequelize.sync({ force: true })  // set force: true to drop tables and recreate on every run
 .then(() => {

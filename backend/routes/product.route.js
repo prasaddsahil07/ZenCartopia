@@ -14,11 +14,11 @@ import { authMiddleware, adminRoute } from "../middleware/auth.middleware.js";
 const router = Router();
 
 // Public or customer routes
-router.get("/getAllProducts", authMiddleware, getAllProducts);
-router.get("/getProductById/:id", authMiddleware, getProductById);
-router.get("/searchProducts", authMiddleware, searchProducts);
-router.get("/getProductsByCategory/:category", authMiddleware, getProductsByCategory);
-router.get("/:id/recommendations", authMiddleware, getRecommendedProducts);
+router.get("/getAllProducts", getAllProducts);
+router.get("/getProductById/:id", getProductById);
+router.get("/searchProducts", searchProducts);
+router.get("/getProductsByCategory/:category", getProductsByCategory);
+router.get("/:id/recommendations", getRecommendedProducts);
 
 // Admin-only routes (requires both authentication and admin privileges)
 router.post("/createProduct", authMiddleware, adminRoute, createProduct);

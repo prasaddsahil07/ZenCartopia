@@ -1,4 +1,3 @@
-// auth.controller.js
 import jwt from "jsonwebtoken";
 import Customer from "../models/customer.model.js";
 

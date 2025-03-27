@@ -17,26 +17,22 @@ const Product = sequelize.define("Product", {
     onUpdate: "CASCADE",
     onDelete: "SET NULL", // If a category is deleted, set product_category_name to NULL
   },
-  product_name_length: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    validate: {
-      min: 1, // Ensures at least one character
-    },
+  product_name: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
-  product_description_length: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    validate: {
-      min: 0, // Ensures non-negative values
-    },
+  product_description: {
+    type: DataTypes.STRING,
+    allowNull: true
   },
-  product_photos_qty: {
-    type: DataTypes.INTEGER,
+  product_price: {
+    type: DataTypes.FLOAT(10, 2),
     allowNull: false,
-    validate: {
-      min: 0, // At least 0 photos (some products may not have images)
-    },
+    defaultValue: 0
+  },
+  product_photos: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
 }, {
   tableName: "products", // Explicit table name

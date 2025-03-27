@@ -75,9 +75,9 @@ export const login = async (req, res) => {
 // Auth Controller: Registration endpoint
 export const register = async (req, res) => {
   try {
-    const { customer_unique_id, customer_password, customer_name , customer_zip_code_prefix, customer_city, customer_state, customer_profile_pic, customer_role } = req.body;
+    const { customer_unique_id, customer_password, customer_name , customer_id, customer_zip_code_prefix, customer_city, customer_state, customer_profile_pic, customer_role } = req.body;
     
-    if(!customer_unique_id || !customer_password || !customer_name){
+    if(!customer_unique_id || !customer_password || !customer_name || !customer_id){
         return res.status(401).json({message: "Fill all the required fields."});
     }
 
@@ -94,6 +94,7 @@ export const register = async (req, res) => {
       customer_unique_id,
       customer_password,
       customer_name,
+      customer_id,
       customer_zip_code_prefix,
       customer_city,
       customer_state,

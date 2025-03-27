@@ -51,7 +51,7 @@ Customer.removeAttribute("id");
 
 Customer.beforeSave(async (customer, options) => {
   if(customer.changed('customer_password')){
-    const salt = await bcrypt.gentsalt(10);
+    const salt = await bcrypt.genSalt(10);
     customer.customer_password = await bcrypt.hash(customer.customer_password, salt);
   }
 });

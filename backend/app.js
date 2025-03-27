@@ -14,6 +14,7 @@ import Review from "./models/review.model.js";
 import Seller from "./models/seller.model.js";
 
 import authRoutes from "./routes/auth.route.js";
+import productRoutes from "./routes/product.route.js";
 
 const app = express();
 
@@ -22,12 +23,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 dotenv.config({
-    path: "./.env"
-})
+    path: "./backend/.env"
+});
+
+// console.log(process.env.ACCESS_TOKEN_SECRET);
+// console.log(process.env.REFRESH_TOKEN_SECRET);
+
 
 const PORT = process.env.PORT || 3000;
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/product", productRoutes);
 
 sequelize.sync({ force: true })  // set force: true to drop tables and recreate on every run
 .then(() => {

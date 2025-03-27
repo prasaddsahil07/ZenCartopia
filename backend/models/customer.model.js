@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/dbConnect.js";
+import bcrypt from "bcryptjs";
 
 const Customer = sequelize.define('Customer', {
   customer_name: {
@@ -43,5 +44,16 @@ const Customer = sequelize.define('Customer', {
 });
 
 Customer.removeAttribute("id");
+
+Customer.beforeSave(async (customer, options) => {
+  if(customer.changed('customer_password')){
+    const salt = await bcrypt.gentsalt(10);
+    customer.customer_password = await bcrypt.hash(customer.customer_password, salt);
+  }
+});
+
+Customer.prototype.comparePassword = async function(password){
+  return bcrypt.compare(password, this.customer_password);
+};
 
 export default Customer;

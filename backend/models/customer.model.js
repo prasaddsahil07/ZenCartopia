@@ -42,6 +42,11 @@ const Customer = sequelize.define('Customer', {
     type: DataTypes.ENUM("customer", "admin"),
     defaultValue: "customer",
   },
+  customer_cart_items: {
+    type: DataTypes.JSON,     // Storing cart items as an array of objects
+    allowNull: true,
+    defaultValue: [],
+  }
 }, {
   tableName: 'customers',   // table name
   timestamps: true,

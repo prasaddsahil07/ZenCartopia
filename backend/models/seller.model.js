@@ -6,6 +6,10 @@ const Seller = sequelize.define("Seller", {
     type: DataTypes.STRING,
     primaryKey: true,
   },
+  seller_name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   seller_zip_code_prefix: {
     type: DataTypes.INTEGER,
     allowNull: false, // Every seller should have a zip code

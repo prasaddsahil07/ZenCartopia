@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { 
-  createOrderAfterPayment, 
+  createOrder, 
   getMyOrders, 
   getOrderDetails, 
   updateOrderStatus, 
@@ -10,7 +10,7 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.post("/create", authMiddleware, createOrderAfterPayment);
+router.post("/create", authMiddleware, createOrder);
 router.get("/my-orders", authMiddleware, getMyOrders);
 router.get("/:order_id", authMiddleware, getOrderDetails);
 router.put("/update/:order_id", authMiddleware, updateOrderStatus);

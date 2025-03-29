@@ -21,7 +21,7 @@ const Order = sequelize.define("Order", {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      isIn: [["pending", "approved", "shipped", "delivered", "canceled", "unavailable"]], // Allowed values
+      isIn: [["pending", "approved", "shipped", "delivered", "canceled", "unavailable"]],
     },
   },
   order_delivered_carrier_date: {

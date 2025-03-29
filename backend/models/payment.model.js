@@ -23,7 +23,8 @@ const Payment = sequelize.define("Payment", {
   },
   payment_installments: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
+    defaultValue: 1,
   },
   payment_value: {
     type: DataTypes.FLOAT,

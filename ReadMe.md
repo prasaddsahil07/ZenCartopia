@@ -33,4 +33,3 @@ Before starting, ensure you have installed:
 
 <!-- 1. Clone the Repository -->
 ### 1. Clone the Repository
-```bash

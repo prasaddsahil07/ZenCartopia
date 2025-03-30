@@ -1,22 +1,33 @@
+// models/shippingDetails.model.js
 import { DataTypes } from "sequelize";
 import sequelize from "../db/dbConnect.js";
+import Order from "./order.model.js";
 
-const Geolocation = sequelize.define("Geolocation", {
-  geolocation_zip_code_prefix: {
+const ShippingDetails = sequelize.define("ShippingDetails", {
+  shipping_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
+    autoIncrement: true,
+  },
+  order_id: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    references: {
+      model: Order, // References the Order model
+      key: "order_id",
+    },
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE",
+  },
+  geolocation_zip_code_prefix: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  // geolocation_lat: {
-  //   type: DataTypes.FLOAT(10, 2), // Restrict precision to avoid floating-point errors
-  //   primaryKey: true,
-  //   allowNull: false,
-  // },
-  // geolocation_lng: {
-  //   type: DataTypes.FLOAT(10, 2), // Restrict precision to avoid floating-point errors
-  //   primaryKey: true,
-  //   allowNull: false,
-  // },
+  geolocation_address: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: "NIT Durgapur",
+  },
   geolocation_city: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -26,8 +37,8 @@ const Geolocation = sequelize.define("Geolocation", {
     allowNull: false,
   },
 }, {
-  tableName: "geolocations", // Explicit table name
+  tableName: "shipping_details", // New table name for shipping details
   timestamps: true,
 });
 
-export default Geolocation;
+export default ShippingDetails;

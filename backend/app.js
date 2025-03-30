@@ -19,6 +19,7 @@ import reviewRoutes from "./routes/review.route.js";
 import cartRoutes from "./routes/cart.route.js";
 import orderRoutes from "./routes/order.route.js";
 import paymentRoutes from "./routes/payment.route.js";
+import shippingDetailRoute from "./routes/shippingDetail.route.js";
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use("/api/v1/review", reviewRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/payment", paymentRoutes);
+app.use("/api/v1/shippingDetail", shippingDetailRoute);
 
 sequelize.sync({ force: true })  // set force: true to drop tables and recreate on every run
 .then(() => {

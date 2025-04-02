@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createShippingDetails, getShippingDetailsByOrderId, updateShippingDetails } from "../controllers/shippingDetails.controller.js";
+import { createShippingDetails, getShippingDetailsByOrderId, updateShippingDetails } from "../controllers/shippingDetail.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = Router();

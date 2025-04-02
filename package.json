@@ -6,7 +6,16 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon backend/app.js",
-    "start": "node backend/app.js"
+    "start": "node backend/app.js",
+    "insert-customers": "node backend/scripts/importCustomer.js",
+    "insert-categories": "node backend/scripts/importCategory.js",
+    "insert-orderItems": "node backend/scripts/importOrderItem.js",
+    "insert-orders": "node backend/scripts/importOrder.js",
+    "insert-payments": "node backend/scripts/importPayment.js",
+    "insert-products": "node backend/scripts/importProduct.js",
+    "insert-reviews": "node backend/scripts/importReview.js",
+    "insert-sellers": "node backend/scripts/importSeller.js",
+    "insert-geolocations": "node backend/scripts/importGeolocation.js"
   },
   "keywords": [],
   "author": "",
@@ -16,8 +25,10 @@
     "cloudinary": "^2.6.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.2",
     "mysql2": "^3.14.0",

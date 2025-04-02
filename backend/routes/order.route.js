@@ -13,7 +13,7 @@ const router = Router();
 router.post("/create", authMiddleware, createOrder);
 router.get("/my-orders", authMiddleware, getMyOrders);
 router.get("/:order_id", authMiddleware, getOrderDetails);
-router.put("/update/:order_id", authMiddleware, updateOrderStatus);
-router.delete("/delete/:order_id", authMiddleware, deleteOrder);
+router.put("/update/:id", authMiddleware, updateOrderStatus);
+router.delete("/delete/:id", authMiddleware, deleteOrder);
 
 export default router;

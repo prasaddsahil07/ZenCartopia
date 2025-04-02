@@ -1,46 +1,85 @@
 import Customer from "../models/customer.model.js";
+import Product from "../models/product.model.js";
 
 // Add cart items
 export const addItemToCart = async (req, res) => {
   try {
-    const { customer_unique_id } = req.user; // Extract customer ID from authenticated user
-    const { product_id, quantity } = req.body;
+    const { customer_unique_id } = req.customer;
+    const { product_id, quantity = 1 } = req.body; // Default quantity to 1
 
-    if (!product_id || quantity <= 0) {
-      return res.status(400).json({ message: "Invalid product ID or quantity" });
+    // Validate input
+    if (!product_id) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Product ID is required" 
+      });
     }
 
+    // Find customer with cart items
     const customer = await Customer.findByPk(customer_unique_id);
-
     if (!customer) {
-      return res.status(404).json({ message: "Customer not found" });
+      return res.status(404).json({ 
+        success: false,
+        message: "Customer not found" 
+      });
     }
 
-    let cart = customer.customer_cart_items || [];
+    // Verify product exists
+    const product = await Product.findByPk(product_id);
+    if (!product) {
+      return res.status(404).json({ 
+        success: false,
+        message: "Product not found" 
+      });
+    }
 
-    // Check if the product already exists in the cart
-    const existingItemIndex = cart.findIndex(item => item.product_id === product_id);
+    // Get current cart or initialize empty array
+    const cart = customer.customer_cart_items || [];
+
+    // Check if product already exists in cart
+    const existingItemIndex = cart.findIndex(
+      item => item.product_id.toString() === product_id.toString()
+    );
 
     if (existingItemIndex !== -1) {
-      cart[existingItemIndex].quantity += 1; // Increase quantity if product exists
+      // Update quantity if product exists
+      cart[existingItemIndex].quantity += Number(quantity);
     } else {
-      cart.push({ product_id, quantity });
+      // Add new item to cart
+      cart.push({
+        product_id: product.product_id,
+        product_name: product.product_name,
+        product_price: product.product_price,
+        quantity: Number(quantity)
+      });
+      console.log("Item added to cart from backend")
     }
 
+    // Update the cart in database
     await customer.update({ customer_cart_items: cart });
+    console.log("cart updated in db")
+    console.log(customer.customer_cart_items);
+    return res.status(200).json({ 
+      success: true,
+      message: "Item added to cart successfully",
+      cart 
+    });
 
-    return res.status(200).json({ message: "Item added to cart", cart });
   } catch (error) {
-    console.error("Error adding item to cart:", error.message);
-    return res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error in addItemToCart:", error);
+    return res.status(500).json({ 
+      success: false,
+      message: "Internal server error",
+      error: error.message 
+    });
   }
 };
 
 // Remove all cart items
 export const removeItemFromCart = async (req, res) => {
   try {
-    const { customer_unique_id } = req.user;
-    const { product_id } = req.params;
+    const { customer_unique_id } = req.customer;
+    const { id } = req.params;
 
     const customer = await Customer.findByPk(customer_unique_id);
 
@@ -49,7 +88,7 @@ export const removeItemFromCart = async (req, res) => {
     }
 
     let cart = customer.customer_cart_items || [];
-    cart = cart.filter(item => item.product_id !== product_id);
+    cart = cart.filter(item => item.product_id !== id);
 
     await customer.update({ customer_cart_items: cart });
 
@@ -63,7 +102,7 @@ export const removeItemFromCart = async (req, res) => {
 // Update cart items quantity
 export const updateCartItemQuantity = async (req, res) => {
   try {
-    const { customer_unique_id } = req.user;
+    const { customer_unique_id } = req.customer;
     const { product_id, quantity } = req.body;
 
     if (!product_id || quantity <= 0) {
@@ -96,7 +135,7 @@ export const updateCartItemQuantity = async (req, res) => {
 // Get Customer's cart
 export const getCustomerCart = async (req, res) => {
   try {
-    const { customer_unique_id } = req.user;
+    const { customer_unique_id } = req.customer;
 
     const customer = await Customer.findByPk(customer_unique_id);
 

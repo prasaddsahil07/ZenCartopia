@@ -12,7 +12,7 @@ const OrderItem = sequelize.define("OrderItem", {
       key: "order_id",
     },
     onUpdate: "CASCADE",
-    onDelete: "CASCADE",
+    onDelete: null,
   },
   order_item_id: {
     type: DataTypes.INTEGER,

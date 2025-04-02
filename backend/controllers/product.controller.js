@@ -20,9 +20,16 @@ export const getAllProducts = async (req, res) => {
 // Get product by id
 export const getProductById = async (req, res) => {
   try {
-    const { product_id } = req.params;
-    const product = await Product.findByPk(product_id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const { id } = req.params;
+    console.log("Product ID received from request:", id); // Debugging
+
+    const product = await Product.findOne({ where: { product_id: id } }); // ✅ Explicitly querying by `product_id`
+    
+    if (!product) {
+      console.log("No product found for ID:", id);
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     res.json(product);
   } catch (error) {
     console.error("Error fetching product:", error.message);
@@ -30,10 +37,11 @@ export const getProductById = async (req, res) => {
   }
 };
 
+
 // Create a new product
 export const createProduct = async (req, res) => {
   try {
-    const { product_id, product_category_name, product_name, product_description, product_price, product_photos } = req.body;
+    const { product_id, product_category_name_english, product_name, product_description, product_price, product_photos } = req.body;
 
     if(!product_id || !product_name || !product_price || !product_photos){
         return res.status(401).json({ message: "Fill all the required fields." });
@@ -41,7 +49,7 @@ export const createProduct = async (req, res) => {
 
     const product = await Product.create({
       product_id,
-      product_category_name,
+      product_category_name_english,
       product_name,
       product_description,
       product_price,
@@ -92,12 +100,10 @@ export const searchProducts = async (req, res) => {
     }
     // Using a simple LIKE query; for advanced search consider full-text search options.
     const products = await Product.findAll({
-      where: {
-        [Product.sequelize.Op.or]: [
-          { product_name: { [Product.sequelize.Op.like]: `%${query}%` } },
-          { product_description: { [Product.sequelize.Op.like]: `%${query}%` } },
-        ],
-      },
+      [Op.or]: [
+        { product_name: { [Op.like]: `%${query}%` } },
+        { product_category_name_english: { [Op.like]: `%${query}%` } },
+      ],
     });
     res.json(products);
   } catch (error) {
@@ -111,7 +117,7 @@ export const getProductsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
     const products = await Product.findAll({
-      where: { product_category_name: category },
+      where: { product_category_name_english: category },
     });
     if (!products || products.length === 0) return res.status(404).json({ message: "No products found for this category" });
     res.json(products);
@@ -134,7 +140,7 @@ export const getRecommendedProducts = async (req, res) => {
       // Find other products in the same category, excluding the current product
       const recommendedProducts = await Product.findAll({
         where: {
-          product_category_name: product.product_category_name,
+          product_category_name_english: product.product_category_name_english,
           product_id: { [Op.ne]: product_id },
         },
         limit: 5, // You can adjust the limit as needed

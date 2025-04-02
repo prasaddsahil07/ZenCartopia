@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv"
 import sequelize from "./db/dbConnect.js"
+import cors from "cors";
 
 import Customer from "./models/customer.model.js";
 import Geolocation from "./models/geolocation.model.js";
@@ -20,8 +21,15 @@ import cartRoutes from "./routes/cart.route.js";
 import orderRoutes from "./routes/order.route.js";
 import paymentRoutes from "./routes/payment.route.js";
 import shippingDetailRoute from "./routes/shippingDetail.route.js";
+import categoryRoute from "./routes/category.route.js";
 
 const app = express();
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods:["GET","POST","DELETE","PUT"],
+}))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -40,8 +48,9 @@ app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/shippingDetail", shippingDetailRoute);
+app.use("/api/v1/category", categoryRoute);
 
-sequelize.sync({ force: true })  // set force: true to drop tables and recreate on every run
+sequelize.sync({ alter: true })
 .then(() => {
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })

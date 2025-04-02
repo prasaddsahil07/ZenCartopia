@@ -1,43 +1,77 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
-const LoginPage = () => {
+const LogInPage = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    customer_unique_id: "",
+    customer_password: "",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login Data Submitted:", formData);
-    // TODO: Connect with backend API
+    try {
+      await login(formData.customer_unique_id, formData.customer_password);
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-orange-100 to-orange-200">
-      <div className="bg-white p-8 rounded-2xl shadow-xl flex w-[80%] max-w-4xl">
-        {/* Left Side - Login Form */}
-        <div className="w-1/2 p-6">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Login</h2>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <input type="text" name="username" placeholder="Username" className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" onChange={handleChange} />
-            <input type="password" name="password" placeholder="Password" className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" onChange={handleChange} />
-            <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg transition">Login</button>
-          </form>
-          <p className="text-gray-600 text-center mt-4">Don't have an account? <span className="text-orange-500 cursor-pointer">Sign Up</span></p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Log In</h2>
+
+        {/* Email Field */}
+        <div className="relative mb-4">
+          <Mail className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="email"
+            name="customer_unique_id"
+            placeholder="Email Address"
+            value={formData.customer_unique_id}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
         </div>
-        {/* Right Side - Branding */}
-        <div className="w-1/2 bg-orange-100 flex flex-col justify-center items-center rounded-2xl p-6">
-          <h2 className="text-3xl font-semibold text-orange-600">Brand Logo</h2>
-          <p className="text-gray-700 mt-2 text-center">(Some text)</p>
+
+        {/* Password Field */}
+        <div className="relative mb-6">
+          <Lock className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="password"
+            name="customer_password"
+            placeholder="Password"
+            value={formData.customer_password}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
         </div>
-      </div>
+
+        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition duration-200">
+          Log In
+        </button>
+
+        <p className="text-center mt-4 text-gray-600">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-600 hover:underline">
+            Sign Up
+          </Link>
+        </p>
+      </form>
     </div>
   );
 };
 
-export default LoginPage;
+export default LogInPage;

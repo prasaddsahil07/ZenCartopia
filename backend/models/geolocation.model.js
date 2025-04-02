@@ -1,4 +1,3 @@
-// models/shippingDetails.model.js
 import { DataTypes } from "sequelize";
 import sequelize from "../db/dbConnect.js";
 import Order from "./order.model.js";

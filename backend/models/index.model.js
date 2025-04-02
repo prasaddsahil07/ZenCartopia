@@ -1,3 +1,4 @@
+import sequelize from "../db/dbConnect.js";
 import Customer from "./customer.model.js";
 import Order from "./order.model.js";
 import OrderItem from "./order_item.model.js";

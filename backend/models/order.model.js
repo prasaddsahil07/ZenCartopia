@@ -5,6 +5,7 @@ import Customer from "./customer.model.js";
 const Order = sequelize.define("Order", {
   order_id: {
     type: DataTypes.STRING,
+    defaultValue: sequelize.UUIDV4,  // Auto-generate a unique UUID
     primaryKey: true,
   },
   customer_unique_id: {
@@ -26,18 +27,21 @@ const Order = sequelize.define("Order", {
   },
   order_delivered_carrier_date: {
     type: DataTypes.DATE,
-    allowNull: true, // Can be null if order is not yet shipped
+    allowNull: true, 
+    defaultValue: DataTypes.NOW, // ✅ Use Sequelize's built-in timestamp
   },
   order_delivered_customer_date: {
     type: DataTypes.DATE,
-    allowNull: true, // Can be null if order is not yet delivered
+    allowNull: true, 
+    defaultValue: DataTypes.NOW, // ✅ Use Sequelize's built-in timestamp
   },
   order_estimated_delivery_date: {
     type: DataTypes.DATE,
-    allowNull: false, // Required field
+    allowNull: true,
+    defaultValue: DataTypes.NOW, // ✅ Use Sequelize's built-in timestamp
   },
 }, {
-  tableName: "orders", // Explicit table name
+  tableName: "orders",
   timestamps: true,
 });
 

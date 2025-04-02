@@ -137,13 +137,13 @@ export const refreshToken = async (req, res) => {
 
 		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-		const accessToken = jwt.sign({ customerId: decoded.customerId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+		const accessToken = jwt.sign({ customerId: decoded.customerId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "50m" });
 
 		res.cookie("accessToken", accessToken, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "strict",
-			maxAge: 15 * 60 * 1000,
+			maxAge: 50 * 60 * 1000,
 		});
 
 		return res.json({ message: "Token refreshed successfully" });
@@ -159,4 +159,32 @@ export const getProfile = async (req, res) => {
 	} catch (error) {
 		return res.status(500).json({ message: "Server error", error: error.message });
 	}
+};
+
+export const updateProfile = async (req, res) => {
+  const { customer_name, customer_zip_code_prefix, customer_city, customer_state, customer_profile_pic, customer_password } = req.body;
+  try {
+    const customer = await Customer.findByPk(req.customer.customer_unique_id);
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    // Update profile fields
+    if (customer_name) customer.customer_name = customer_name;
+    if (customer_zip_code_prefix) customer.customer_zip_code_prefix = customer_zip_code_prefix;
+    if (customer_city) customer.customer_city = customer_city;
+    if (customer_state) customer.customer_state = customer_state;
+    if (customer_profile_pic) customer.customer_profile_pic = customer_profile_pic;
+
+    // Update password if provided and hashed
+    if (customer_password) {
+      const salt = await bcrypt.genSalt(10);
+      customer.customer_password = await bcrypt.hash(customer_password, salt);
+    }
+
+    await customer.save();
+    return res.json({ message: "Profile updated successfully", customer });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
 };

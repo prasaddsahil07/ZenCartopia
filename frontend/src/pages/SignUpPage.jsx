@@ -1,58 +1,176 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { User, Mail, Lock, Home, MapPin, Image, UserCheck } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const SignUpPage = () => {
+  const { signup } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    zip_code: "",
-    city: "",
-    state: "",
-    profilePicture: null,
+    customer_unique_id: "",
+    customer_password: "",
+    customer_name: "",
+    customer_id: "",
+    customer_zip_code_prefix: "",
+    customer_city: "",
+    customer_state: "",
+    customer_profile_pic: "",
+    customer_role: "customer",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, profilePicture: e.target.files[0] }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
-    // TODO: Connect with backend API
+    try {
+      await signup(formData);
+      navigate("/login");
+    } catch (error) {
+      console.error("Signup error:", error);
+    }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-orange-100 to-orange-200">
-      <div className="bg-white p-8 rounded-2xl shadow-xl flex w-[80%] max-w-4xl">
-        {/* Left Side - Signup Form */}
-        <div className="w-1/2 p-6">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Sign Up</h2>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <input type="text" name="username" placeholder="Username" className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" onChange={handleChange} />
-            <input type="password" name="password" placeholder="Password" className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" onChange={handleChange} />
-            <input type="text" name="zip_code" placeholder="Zip Code" className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" onChange={handleChange} />
-            <div className="flex gap-4">
-              <input type="text" name="city" placeholder="City" className="w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" onChange={handleChange} />
-              <input type="text" name="state" placeholder="State" className="w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" onChange={handleChange} />
-            </div>
-            <label className="border-2 border-dashed border-gray-400 p-3 rounded-lg text-center cursor-pointer bg-gray-500 block hover:cursor-pointer underline">
-              Upload a profile picture
-              <input type="file" name="profilePicture" className="hidden" accept="image/*" onChange={handleFileChange} />
-            </label>
-            <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg transition">Sign Up</button>
-          </form>
-          <p className="text-gray-600 text-center mt-4">Already have an account? <span className="text-orange-500 cursor-pointer">Login</span></p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Create Account</h2>
+
+        {/* Name */}
+        <div className="relative mb-4">
+          <User className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="text"
+            name="customer_name"
+            placeholder="Full Name"
+            value={formData.customer_name}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
         </div>
-        {/* Right Side - Branding */}
-        <div className="w-1/2 bg-orange-100 flex flex-col justify-center items-center rounded-2xl p-6">
-          <h2 className="text-3xl font-semibold text-orange-600">Brand Logo</h2>
-          <p className="text-gray-700 mt-2 text-center">Welcome to the best e-commerce platform!</p>
+
+        {/* Email as customer_unique_id */}
+        <div className="relative mb-4">
+          <Mail className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="email"
+            name="customer_unique_id"
+            placeholder="Email Address"
+            value={formData.customer_unique_id}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
         </div>
-      </div>
+
+        {/* Password */}
+        <div className="relative mb-4">
+          <Lock className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="password"
+            name="customer_password"
+            placeholder="Password"
+            value={formData.customer_password}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        {/* Customer ID */}
+        <div className="relative mb-4">
+          <Home className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="text"
+            name="customer_id"
+            placeholder="Customer ID"
+            value={formData.customer_id}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        {/* Zip Code */}
+        <div className="relative mb-4">
+          <MapPin className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="text"
+            name="customer_zip_code_prefix"
+            placeholder="Zip Code"
+            value={formData.customer_zip_code_prefix}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        {/* City */}
+        <div className="relative mb-4">
+          <Home className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="text"
+            name="customer_city"
+            placeholder="City"
+            value={formData.customer_city}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        {/* State */}
+        <div className="relative mb-4">
+          <MapPin className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="text"
+            name="customer_state"
+            placeholder="State"
+            value={formData.customer_state}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        {/* Profile Picture URL */}
+        <div className="relative mb-4">
+          <Image className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="text"
+            name="customer_profile_pic"
+            placeholder="Profile Picture URL"
+            value={formData.customer_profile_pic}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        {/* Role Selector */}
+        <div className="relative mb-6">
+          <UserCheck className="absolute left-3 top-3 text-gray-400" />
+          <select
+            name="customer_role"
+            value={formData.customer_role}
+            onChange={handleChange}
+            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="customer">Customer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition duration-200">
+          Sign Up
+        </button>
+
+        <p className="text-center mt-4 text-gray-600">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Log In
+          </Link>
+        </p>
+      </form>
     </div>
   );
 };

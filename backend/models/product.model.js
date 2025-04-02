@@ -7,35 +7,36 @@ const Product = sequelize.define("Product", {
     type: DataTypes.STRING,
     primaryKey: true,
   },
-  product_category_name: {
+  product_category_name_english: {
     type: DataTypes.STRING,
-    allowNull: true, 
+    allowNull: true,
     references: {
       model: ProductCategory,
-      key: "product_category_name",
+      key: "product_category_name_english",
     },
     onUpdate: "CASCADE",
-    onDelete: "SET NULL", // If a category is deleted, set product_category_name to NULL
+    onDelete: "SET NULL",
   },
   product_name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   product_description: {
     type: DataTypes.STRING,
-    allowNull: true
+    allowNull: true,
   },
   product_price: {
     type: DataTypes.FLOAT(10, 2),
     allowNull: false,
-    defaultValue: 0
+    defaultValue: 0,
   },
   product_photos: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true,
+    defaultValue: "https://source.unsplash.com/random/300x300?fashion",
   },
 }, {
-  tableName: "products", // Explicit table name
+  tableName: "products",
   timestamps: true,
 });
 

@@ -25,7 +25,7 @@ export const createOrder = async (req, res) => {
 
     // Validate required fields
     if (
-      !order_id ||
+      !order_id,
       !customer_unique_id ||
       !order_estimated_delivery_date ||
       !items ||
@@ -35,48 +35,39 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ message: "Missing required order fields or items." });
     }
 
-    // Create order and associated items within a transaction for atomicity
-    const result = await sequelize.transaction(async (t) => {
-      const newOrder = await Order.create(
-        {
-          order_id,
-          customer_unique_id,
-          order_status,
-          order_estimated_delivery_date,
-          order_delivered_carrier_date,
-          order_delivered_customer_date,
-        },
-        { transaction: t }
-      );
-
-      // Create each order item in parallel
-      const orderItemsPromises = items.map((item) =>
-        OrderItem.create(
-          {
-            order_id,
-            order_item_id: item.order_item_id,
-            product_id: item.product_id,
-            seller_id: item.seller_id,
-            shipping_limit_date: item.shipping_limit_date,
-            price: item.price,
-            freight_value: item.freight_value,
-          },
-          { transaction: t }
-        )
-      );
-
-      const orderItems = await Promise.all(orderItemsPromises);
-      return { order: newOrder, items: orderItems };
+    // Create order
+    const newOrder = await Order.create({
+      order_id,
+      customer_unique_id,
+      order_status,
+      order_estimated_delivery_date,
+      order_delivered_carrier_date,
+      order_delivered_customer_date,
     });
+
+    // Create each order item sequentially
+    const orderItems = [];
+    for (const item of items) {
+      const orderItem = await OrderItem.create({
+        order_id,
+        order_item_id: item.order_item_id,
+        product_id: item.product_id,
+        seller_id: item.seller_id,
+        shipping_limit_date: item.shipping_limit_date,
+        price: item.price,
+        freight_value: item.freight_value,
+      });
+      orderItems.push(orderItem);
+    }
 
     return res.status(201).json({
       message: "Order created successfully",
-      order: result.order,
-      items: result.items,
+      order: newOrder,
+      items: orderItems,
     });
   } catch (error) {
-    console.error("Error creating order:", error.message);
-    return res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error creating order:", error);
+    return res.status(500).json({ message: "Server error", error: error.errors || error.message });
   }
 };
 
@@ -87,11 +78,49 @@ export const createOrder = async (req, res) => {
  */
 export const getMyOrders = async (req, res) => {
   try {
-    const { customer_unique_id } = req.user;
+    const { customer_unique_id } = req.customer;
 
     const orders = await Order.findAll({
       where: { customer_unique_id },
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+          attributes: ["order_item_id", "shipping_limit_date", "price", "freight_value"],
+          include: [
+            {
+              model: Product,
+              as: "product",
+              attributes: ["product_name", "product_photos, product_price"],
+            },
+            {
+              model: Seller,
+              as: "seller",
+              attributes: ["seller_name"],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.status(200).json({ orders });
+  } catch (error) {
+    console.error("Error fetching orders:", error.message);
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+/**
+ * Get detailed order information by .
+ * Returns order details along with all associated order items,
+ * including product and seller details.
+ * Expects order_id as a URL parameter.
+ */
+export const getOrderDetails = async (req, res) => {
+  try {
+    const { order_id } = req.params;
+    const order = await Order.findByPk(order_id, {
       include: [
         {
           model: OrderItem,
@@ -113,54 +142,15 @@ export const getMyOrders = async (req, res) => {
       ],
     });
 
-    return res.status(200).json({ orders });
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    return res.status(200).json({ order });
   } catch (error) {
-    console.error("Error fetching orders:", error.message);
+    console.error("Error fetching order details:", error.message);
     return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
-/**
- * Get detailed order information by order_id.
- * Returns order details along with all associated order items,
- * including product and seller details.
- * Expects order_id as a URL parameter.
- */
-export const getOrderDetails = async (req, res) => {
-    try {
-      const { order_id } = req.params;
-      const order = await Order.findByPk(order_id, {
-        include: [
-          {
-            model: OrderItem,
-            as: "items",
-            attributes: ["order_item_id", "shipping_limit_date", "price", "freight_value"],
-            include: [
-              {
-                model: Product,
-                as: "product",
-                attributes: ["product_name", "product_photos"],
-              },
-              {
-                model: Seller,
-                as: "seller",
-                attributes: ["seller_name"],
-              },
-            ],
-          },
-        ],
-      });
-  
-      if (!order) {
-        return res.status(404).json({ message: "Order not found" });
-      }
-      return res.status(200).json({ order });
-    } catch (error) {
-      console.error("Error fetching order details:", error.message);
-      return res.status(500).json({ message: "Server error", error: error.message });
-    }
-  };
-  
 
 /**
  * Update an order's status.
@@ -196,8 +186,8 @@ export const updateOrderStatus = async (req, res) => {
  */
 export const deleteOrder = async (req, res) => {
   try {
-    const { order_id } = req.params;
-    const order = await Order.findByPk(order_id);
+    const { id } = req.params;
+    const order = await Order.findByPk(id);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }

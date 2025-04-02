@@ -34,140 +34,168 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Create Account</h2>
-
-        {/* Name */}
-        <div className="relative mb-4">
-          <User className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="text"
-            name="customer_name"
-            placeholder="Full Name"
-            value={formData.customer_name}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-4">
+      <form 
+        onSubmit={handleSubmit} 
+        className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg border border-gray-100"
+      >
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Join Us Today</h2>
+          <p className="mt-1 text-sm text-gray-500">Create your account in seconds.</p>
         </div>
-
-        {/* Email as customer_unique_id */}
-        <div className="relative mb-4">
-          <Mail className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="email"
-            name="customer_unique_id"
-            placeholder="Email Address"
-            value={formData.customer_unique_id}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
+  
+        {/* Grid Layout for Compactness */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Name */}
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Full Name</label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                name="customer_name"
+                placeholder="John Doe"
+                value={formData.customer_name}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+          </div>
+  
+          {/* Email */}
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="email"
+                name="customer_unique_id"
+                placeholder="your@email.com"
+                value={formData.customer_unique_id}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+          </div>
+  
+          {/* Password */}
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="password"
+                name="customer_password"
+                placeholder="••••••••"
+                value={formData.customer_password}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+          </div>
+  
+          {/* Location Group */}
+          <div className="col-span-1">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Zip Code</label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                name="customer_zip_code_prefix"
+                placeholder="12345"
+                value={formData.customer_zip_code_prefix}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+  
+          <div className="col-span-1">
+            <label className="block text-xs font-medium text-gray-500 mb-1">State</label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                name="customer_state"
+                placeholder="CA"
+                value={formData.customer_state}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+  
+          {/* City */}
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-gray-500 mb-1">City</label>
+            <div className="relative">
+              <Home className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                name="customer_city"
+                placeholder="San Francisco"
+                value={formData.customer_city}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+  
+          {/* Profile Picture */}
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Profile Picture URL <span className="text-gray-400">(Optional)</span>
+            </label>
+            <div className="relative">
+              <Image className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                name="customer_profile_pic"
+                placeholder="https://example.com/photo.jpg"
+                value={formData.customer_profile_pic}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+  
+          {/* Role Selector */}
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Account Type</label>
+            <div className="relative">
+              <UserCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <select
+                name="customer_role"
+                value={formData.customer_role}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+              >
+                <option value="customer">Customer</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
         </div>
-
-        {/* Password */}
-        <div className="relative mb-4">
-          <Lock className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="password"
-            name="customer_password"
-            placeholder="Password"
-            value={formData.customer_password}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </div>
-
-        {/* Customer ID */}
-        <div className="relative mb-4">
-          <Home className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="text"
-            name="customer_id"
-            placeholder="Customer ID"
-            value={formData.customer_id}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </div>
-
-        {/* Zip Code */}
-        <div className="relative mb-4">
-          <MapPin className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="text"
-            name="customer_zip_code_prefix"
-            placeholder="Zip Code"
-            value={formData.customer_zip_code_prefix}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* City */}
-        <div className="relative mb-4">
-          <Home className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="text"
-            name="customer_city"
-            placeholder="City"
-            value={formData.customer_city}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* State */}
-        <div className="relative mb-4">
-          <MapPin className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="text"
-            name="customer_state"
-            placeholder="State"
-            value={formData.customer_state}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* Profile Picture URL */}
-        <div className="relative mb-4">
-          <Image className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="text"
-            name="customer_profile_pic"
-            placeholder="Profile Picture URL"
-            value={formData.customer_profile_pic}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* Role Selector */}
-        <div className="relative mb-6">
-          <UserCheck className="absolute left-3 top-3 text-gray-400" />
-          <select
-            name="customer_role"
-            value={formData.customer_role}
-            onChange={handleChange}
-            className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            <option value="customer">Customer</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-
-        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition duration-200">
-          Sign Up
+  
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-2 rounded-md text-sm font-medium shadow-sm transition duration-200"
+        >
+          Create Account
         </button>
-
-        <p className="text-center mt-4 text-gray-600">
+  
+        {/* Login Link */}
+        <p className="text-center mt-4 text-xs text-gray-500">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Log In
+          <Link
+            to="/login"
+            className="text-blue-600 hover:text-blue-700 font-medium underline"
+          >
+            Sign In
           </Link>
         </p>
       </form>

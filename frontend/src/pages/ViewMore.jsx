@@ -11,7 +11,6 @@ const ViewMore = () => {
     const [searchParams] = useSearchParams();
     const category = searchParams.get("category");
     const [products, setProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [priceRange, setPriceRange] = useState([0, 10000]);
     const [sortOrder, setSortOrder] = useState("lowToHigh");
@@ -21,10 +20,16 @@ const ViewMore = () => {
             setLoading(true);
             try {
                 const res = await axios.get(
-                    `http://localhost:3000/api/v1/product/getProductsByCategory/${category}`
+                    `http://localhost:3000/api/v1/product/getProductsByCategory/${category}`,
+                    {
+                        params: {
+                            minPrice: priceRange[0],
+                            maxPrice: priceRange[1],
+                            sortOrder: sortOrder
+                        }
+                    }
                 );
                 setProducts(res.data);
-                setFilteredProducts(res.data);
             } catch (error) {
                 console.error(`Error fetching products for ${category}:`, error);
             }
@@ -34,19 +39,7 @@ const ViewMore = () => {
         if (category) {
             fetchProducts();
         }
-    }, [category]);
-
-    useEffect(() => {
-        let filtered = products.filter(
-            (product) => product.product_price >= priceRange[0] && product.product_price <= priceRange[1]
-        );
-        if (sortOrder === "lowToHigh") {
-            filtered.sort((a, b) => a.product_price - b.product_price);
-        } else {
-            filtered.sort((a, b) => b.product_price - a.product_price);
-        }
-        setFilteredProducts(filtered);
-    }, [priceRange, sortOrder, products]);
+    }, [category, priceRange, sortOrder]);
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -102,11 +95,11 @@ const ViewMore = () => {
             {/* Product List */}
             {loading ? (
                 <p className="text-gray-600 text-center mt-10">Loading products...</p>
-            ) : filteredProducts.length === 0 ? (
+            ) : products.length === 0 ? (
                 <p className="text-gray-600 text-center">No products available.</p>
             ) : (
                 <div className="max-w-screen-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 px-4 space-y-4 space-x-4">
-                    {filteredProducts.map((product) => (
+                    {products.map((product) => (
                         <ProductItem key={product.product_id} product={product} />
                     ))} 
                 </div>

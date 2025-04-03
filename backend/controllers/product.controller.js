@@ -115,15 +115,36 @@ export const searchProducts = async (req, res) => {
 // Get products by category
 export const getProductsByCategory = async (req, res) => {
   try {
-    const { category } = req.params;
-    const products = await Product.findAll({
-      where: { product_category_name_english: category },
-    });
-    if (!products || products.length === 0) return res.status(404).json({ message: "No products found for this category" });
-    res.json(products);
+      const { category } = req.params;
+      const { sortOrder, minPrice = 0, maxPrice = 10000 } = req.query;
+
+      // Build the where clause
+      const where = {
+          product_category_name_english: category,
+          product_price: {
+              [Op.gte]: Number(minPrice),
+              [Op.lte]: Number(maxPrice)
+          }
+      };
+
+      // Define order
+      let order = [];
+      if (sortOrder === 'lowToHigh') {
+          order = [['product_price', 'ASC']];
+      } else if (sortOrder === 'highToLow') {
+          order = [['product_price', 'DESC']];
+      }
+
+      // Query the database
+      const products = await Product.findAll({
+          where,
+          order
+      });
+
+      res.json(products);
   } catch (error) {
-    console.error("Error fetching products by category:", error.message);
-    res.status(500).json({ message: "Server error", error: error.message });
+      console.error(`Error fetching products`, error);
+      res.status(500).json({ error: 'Internal server error' });
   }
 };
 

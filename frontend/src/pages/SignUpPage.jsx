@@ -79,6 +79,22 @@ const SignUpPage = () => {
               />
             </div>
           </div>
+
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Your Id</label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                name="customer_id"
+                placeholder="customer_id"
+                value={formData.customer_id}
+                onChange={handleChange}
+                className="text-sm pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+          </div>
   
           {/* Password */}
           <div className="col-span-2">

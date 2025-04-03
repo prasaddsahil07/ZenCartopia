@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
 
 export const CartContext = createContext();
@@ -6,21 +6,27 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized]  = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => { // Wrap with useCallback
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:3000/api/v1/cart/", { withCredentials: true });
+      const response = await axios.get("/api/v1/cart/myCart", { withCredentials: true });
       setCart(response.data.cart || []);
-      setError(null);
     } catch (error) {
       console.error("Error fetching cart:", error);
-      setError("Failed to load cart");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!initialized) { // Only fetch if not initialized
+      fetchCart();
+      setInitialized(true);
+    }
+  }, [fetchCart, initialized]);
 
   // Get cart items
   const getCartItems = () => {
@@ -28,34 +34,52 @@ export const CartProvider = ({ children }) => {
   };
 
   // Add item to cart
-  const addToCart = async (product_id, quantity = 1) => {
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/cart/add",
-        { product_id, quantity },
-        { withCredentials: true }
-      );
-      console.log(response.data);
-      if (response.data.success) {
-        await fetchCart(); // Refresh local cart state
-        return true;
-      } else {
-        setError(response.data.message || "Failed to add item to cart");
-        return false;
-      }
-    } catch (error) {
-      console.error("Cart addition error:", error);
-      setError(
-        error.response?.data?.message || 
-        error.message || 
-        "Failed to add item to cart"
-      );
-      return false;
-    } finally {
-      setLoading(false);
+  // In your CartContext.js
+const addToCart = async (product_id, quantity = 1) => {
+  try {
+    setLoading(true);
+    const response = await axios.post(
+      "http://localhost:3000/api/v1/cart/add",
+      { product_id, quantity },
+      { withCredentials: true }
+    );
+    
+    if (response.data.success) {
+      // Optimistically update local state
+      setCart(prevCart => {
+        const existingItem = prevCart.find(item => item.product_id === product_id);
+        if (existingItem) {
+          return prevCart.map(item =>
+            item.product_id === product_id 
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        } else {
+          // Make sure the response contains all required product details
+          return [
+            ...prevCart,
+            {
+              product_id,
+              product_name: response.data.product?.product_name || "Unknown Product",
+              product_image: response.data.product?.product_image || "/placeholder.png",
+              price: response.data.product?.price || 0,
+              category: response.data.produc?.product_category_name_english, 
+              quantity
+            }
+          ];
+        }
+      });
+      return true;
     }
-  };
+    return false;
+  } catch (error) {
+    console.error("Add to cart error:", error);
+    setError(error.response?.data?.message || "Failed to add item");
+    return false;
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Remove item from cart
   const removeFromCart = async (id) => {
@@ -132,3 +156,6 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
+const useCart = () => useContext(CartContext);
+export {useCart};

@@ -32,7 +32,7 @@ export const authMiddleware = async (req, res, next) => {
 };
 
 export const adminRoute = (req, res, next) => {
-	if (req.customer && req.customer.role === "admin") {
+	if (req.customer && req.customer.customer_role === "admin") {
 		next();
 	} else {
 		return res.status(403).json({ message: "Access denied - Admin only" });

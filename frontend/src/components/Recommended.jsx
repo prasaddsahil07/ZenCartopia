@@ -1,52 +1,76 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const RecommendedProducts = ({ cart }) => {
   const [recommended, setRecommended] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [visibleCount, setVisibleCount] = useState(4);
 
   useEffect(() => {
-    if (cart.length === 0) {
-      setRecommended([]);
-      setIsLoading(false);
-      return;
-    }
-    
     const fetchRecommendations = async () => {
-      try {
-        setIsLoading(true);
-        const recommendations = [];
-        
-        for (const item of cart) {
-          const response = await fetch(`http://localhost:3000/api/v1/product/${item.product_id}/recommendations`);
-          const data = await response.json();
-          if (data.recommended) {
-            recommendations.push(...data.recommended);
-          }
-        }
+      const categories = [...new Set(
+        cart
+          .filter(item => item.category) // Only include items with category
+          .map(item => item.category)
+      )];
 
-        // Remove duplicate products
-        const uniqueRecommendations = recommendations.filter((product, index, self) =>
-          index === self.findIndex((p) => p.product_id === product.product_id)
-        );
-        
-        setRecommended(uniqueRecommendations);
-      } catch (error) {
-        console.error("Error fetching recommended products:", error);
+      // Skip if no valid categories found
+      if (categories.length === 0) {
+        setRecommended([]);
+        return;
       }
-      setIsLoading(false);
+      
+      try {
+        // Get unique categories from cart items
+        const categories = [...new Set(cart.map(item => item.category))];
+        
+        // Fetch recommendations based on categories
+        const response = await axios.get(
+          "http://localhost:3000/api/v1/product/recommendations",
+          {
+            params: { categories: categories.join(",") },
+            withCredentials: true
+          }
+        );
+
+        // Filter out items already in cart
+        const cartProductIds = cart.map(item => item.product_id);
+        const filteredRecommendations = response.data.products.filter(
+          product => !cartProductIds.includes(product.product_id)
+        );
+
+        setRecommended(filteredRecommendations);
+      } catch (err) {
+        console.error("Recommendation error:", err);
+        setError("Failed to load recommendations");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchRecommendations();
   }, [cart]);
 
   if (isLoading) {
-    return <p>Loading recommended products...</p>;
+    return (
+      <div className="text-center py-4">
+        <p>Loading recommendations...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-4 text-red-500">
+        {error}
+      </div>
+    );
   }
 
   if (recommended.length === 0) {
-    return null; // Don't render anything if there are no recommendations
+    return null;
   }
 
   return (
@@ -57,16 +81,19 @@ const RecommendedProducts = ({ cart }) => {
           <div key={product.product_id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
             <div className="relative aspect-square bg-gray-100">
               <img
-                src={product.img}
-                alt={product.name}
+                src={product.product_image || "/placeholder.png"}
+                alt={product.product_name}
                 className="absolute inset-0 w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = "/placeholder.png";
+                }}
               />
             </div>
             <div className="p-3 text-center">
-              <h4 className="font-semibold text-sm mb-1">{product.name}</h4>
+              <h4 className="font-semibold text-sm mb-1 line-clamp-2">{product.product_name}</h4>
               <span className="font-bold text-pink-600">₹{product.price}</span>
-              <Link to={`/${product.product_id}`}>
-                <button className="mt-2 w-full bg-pink-50 text-pink-600 py-2 rounded-md hover:bg-pink-100">
+              <Link to={`/product/${product.product_id}`}>
+                <button className="mt-2 w-full bg-pink-50 text-pink-600 py-2 rounded-md hover:bg-pink-100 transition">
                   View Details
                 </button>
               </Link>
@@ -76,10 +103,10 @@ const RecommendedProducts = ({ cart }) => {
       </div>
       {visibleCount < recommended.length && (
         <button 
-          onClick={() => setVisibleCount((prev) => prev + 4)}
-          className="mt-4 bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600"
+          onClick={() => setVisibleCount(prev => prev + 4)}
+          className="mt-4 w-full bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 transition"
         >
-          View More
+          Show More
         </button>
       )}
     </div>

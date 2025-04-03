@@ -11,6 +11,6 @@ const router = Router();
 router.post("/add", authMiddleware, addItemToCart);
 router.put("/update", authMiddleware, updateCartItemQuantity);
 router.delete("/remove/:id", authMiddleware, removeItemFromCart);
-router.get("/", authMiddleware, getCustomerCart);
+router.get("/myCart", authMiddleware, getCustomerCart);
 
 export default router;

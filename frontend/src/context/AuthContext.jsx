@@ -50,7 +50,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.get("/auth/profile"); // Fetch user details
       setUser(response.data);
-      console.log(response.data);
     } catch (error) {
       setUser(null);
     } finally {
@@ -105,7 +104,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout , checkingAuth }}>
+    <AuthContext.Provider value={{ user, login, signup, logout , checkingAuth, checkAuth }}>
       {children}
     </AuthContext.Provider>
   );

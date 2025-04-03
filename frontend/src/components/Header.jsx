@@ -4,6 +4,7 @@ import { FaShoppingCart, FaUserCircle, FaSearch } from "react-icons/fa";
 import { MdArrowDropDown } from "react-icons/md";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 const Header = ({ user }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -14,6 +15,8 @@ const Header = ({ user }) => {
 
     // Get the cart from CartContext
     const cartContext = useContext(CartContext);
+
+    const {logout} = useAuth();
     
     // Debug to check what's coming from the context
     // useEffect(() => {
@@ -55,27 +58,6 @@ const Header = ({ user }) => {
         e.preventDefault();
         if (searchQuery.trim()) {
             navigate(`/search?query=${searchQuery}`);
-        }
-    };
-
-    const handleLogout = async () => {
-        try {
-            // Call the backend API to log out (if necessary)
-            await axios.post('http://localhost:3000/api/v1/auth/logout'); // Replace with your logout API endpoint
-
-            // Remove access and refresh tokens from cookies
-            document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-            document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-
-            // Clear user data from localStorage/sessionStorage (optional)
-            localStorage.removeItem('user');
-            sessionStorage.removeItem('user');
-
-            // Redirect to the login page
-            navigate('/login');
-        } catch (error) {
-            console.error('Logout error:', error);
-            alert('Failed to log out');
         }
     };
 
@@ -161,7 +143,7 @@ const Header = ({ user }) => {
                                 My Orders
                             </Link>
                             <button
-                                onClick={handleLogout}
+                                onClick={logout}
                                 className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
                             >
                                 Logout

@@ -20,10 +20,13 @@ const ProductDetails = () => {
       const success = await addToCart(id, 1);
       if (success) {
         alert("Item added to cart successfully!");
+        // Optionally refresh cart data
+        // You might want to add fetchCart to your CartContext
       } else {
         alert("Failed to add item to cart");
       }
     } catch (err) {
+      console.error("Add to cart error:", err);
       alert("An error occurred while adding to cart.");
     }
   };

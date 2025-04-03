@@ -22,6 +22,7 @@ import orderRoutes from "./routes/order.route.js";
 import paymentRoutes from "./routes/payment.route.js";
 import shippingDetailRoute from "./routes/shippingDetail.route.js";
 import categoryRoute from "./routes/category.route.js";
+import analyticRoute from "./routes/analytic.route.js";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/shippingDetail", shippingDetailRoute);
 app.use("/api/v1/category", categoryRoute);
+app.use("/api/v1/analysis", analyticRoute);
 
 sequelize.sync({ alter: true })
 .then(() => {

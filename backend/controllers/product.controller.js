@@ -127,32 +127,29 @@ export const getProductsByCategory = async (req, res) => {
   }
 };
 
+// Recommended endpoint in your backend
 export const getRecommendedProducts = async (req, res) => {
-    try {
-      const { product_id } = req.params;
-  
-      // Find the product first to get its category
-      const product = await Product.findByPk(product_id);
-      if (!product) {
-        return res.status(404).json({ message: "Product not found" });
-      }
-  
-      // Find other products in the same category, excluding the current product
-      const recommendedProducts = await Product.findAll({
-        where: {
-          product_category_name_english: product.product_category_name_english,
-          product_id: { [Op.ne]: product_id },
-        },
-        limit: 5, // You can adjust the limit as needed
-        order: [["createdAt", "DESC"]], // Order by newest first or any other logic
-      });
-  
-      res.json({
-        message: "Recommended products fetched successfully",
-        recommended: recommendedProducts,
-      });
-    } catch (error) {
-      console.error("Error fetching recommended products:", error.message);
-      res.status(500).json({ message: "Server error", error: error.message });
-    }
-  };
+  try {
+    const { categories } = req.query;
+    const categoryList = categories?.split(',') || [];
+    
+    // Get recommended products based on categories
+    const recommendedProducts = await Product.findAll({
+      where: {
+        category: categoryList
+      },
+      limit: 12,
+      order: sequelize.random() // For random recommendations
+    });
+
+    res.json({
+      success: true,
+      products: recommendedProducts
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching recommendations"
+    });
+  }
+};

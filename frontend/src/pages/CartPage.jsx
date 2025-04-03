@@ -1,30 +1,53 @@
-import React, { useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { CartContext } from "../context/CartContext";
+import { useCart } from "../context/CartContext";
 import CartItem from "../components/CartItem";
 import RecommendedProducts from "../components/Recommended";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const CartPage = () => {
-  const { cart, loading, fetchCart } = useContext(CartContext);
-  
+  const { cart, loading, fetchCart } = useCart();
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
   useEffect(() => {
-    fetchCart();
-  }, []);
+    const loadCart = async () => {
+      try {
+        await fetchCart();
+        setInitialLoadComplete(true);
+      } catch (error) {
+        console.error("Failed to load cart:", error);
+        setInitialLoadComplete(true); // Still mark as complete even if error
+      }
+    };
+
+    // Only fetch if we haven't loaded yet and cart is empty
+    if (!initialLoadComplete && cart.length === 0) {
+      loadCart();
+    }
+  }, [cart.length, initialLoadComplete, fetchCart]);
+
+  // Show loading state only during initial load when cart is empty
+  if (!initialLoadComplete && cart.length === 0) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-100">
+        <Header />
+        <div className="flex-grow flex items-center justify-center">
+          <p className="text-gray-600">Loading your cart...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-      {/* Header */}
       <Header />
-
-      {/* Main Content (Cart) */}
+      
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl mx-auto flex-grow mt-8 mb-12">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">🛒 Your Shopping Cart</h1>
 
-        {loading ? (
-          <p className="text-center text-gray-600">Loading...</p>
-        ) : cart.length === 0 ? (
+        {cart.length === 0 ? (
           <div className="text-center">
             <p className="text-gray-500 mb-4">Your cart is empty. Start adding some products! 🛍️</p>
             <Link
@@ -46,7 +69,6 @@ const CartPage = () => {
         )}
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

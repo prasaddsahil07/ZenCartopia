@@ -18,7 +18,7 @@ router.get("/getAllProducts", getAllProducts);
 router.get("/getProductById/:id", getProductById);
 router.get("/searchProducts", searchProducts);
 router.get("/getProductsByCategory/:category", getProductsByCategory);
-router.get("/:id/recommendations", getRecommendedProducts);
+router.get("/recommendations", getRecommendedProducts);
 
 // Admin-only routes (requires both authentication and admin privileges)
 router.post("/createProduct", authMiddleware, adminRoute, createProduct);
